@@ -211,18 +211,18 @@ fn open_dir(dirpath string, dirname string, clear bool, then Action) {
 	}
 	match then {
 		.open_in_term {
-			os.execvp('cmd', ['/k', 'cd', '/d', '"' + os.real_path(dirpath + '"')]) or {
+			os.execvp('cmd', ['/k', 'cd', '/d', os.quoted_path(os.real_path(dirpath))]) or {
 				println('Failed to open tmp dir: ' + dirpath)
 			}
 		}
 		.open_in_explorer {
-			os.execvp('explorer', [os.real_path(dirpath)]) or {
+			os.execvp('explorer', [os.quoted_path(os.real_path(dirpath))]) or {
 				println('Failed to open tmp dir: ' + dirpath)
 			}
 		}
 		else {}
 	}
-	os.execvp('cmd', ['/k', 'cd', '/d', '"' + os.real_path(dirpath + '"')]) or {
+	os.execvp('cmd', ['/k', 'cd', '/d', os.quoted_path(os.real_path(dirpath))]) or {
 		println('Failed to open tmp dir: ' + dirpath)
 	}
 }
