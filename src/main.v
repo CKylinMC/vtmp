@@ -194,6 +194,7 @@ fn open_tmp_dir(clear bool, then Action) {
 	dirpath, dirname := create_new_tmp_dir()
 	defer {
 		if clear {
+			println("Try cleaning up the folder...")
 			remove_dir(dirname)
 			unremember_last_tmp_dir()
 			println('Removed tmp dir: ' + dirname)
@@ -209,21 +210,15 @@ fn open_dir(dirpath string, dirname string, clear bool, then Action) {
 	} else {
 		println('Remember to remove the folder after you finish.')
 	}
+
 	match then {
 		.open_in_term {
-			os.execvp('cmd', ['/k', 'cd', '/d', os.quoted_path(os.real_path(dirpath))]) or {
-				println('Failed to open tmp dir: ' + dirpath)
-			}
+			os.system("set CLINK_NOAUTORUN=1 && start /W /B cmd.exe /s /k \"prompt (tmp) \$P\$G && cd /d "+os.quoted_path(os.real_path(dirpath)).replace("\"","^\"")+"\"")
 		}
 		.open_in_explorer {
-			os.execvp('explorer', [os.quoted_path(os.real_path(dirpath))]) or {
-				println('Failed to open tmp dir: ' + dirpath)
-			}
+			os.system("explorer "+os.quoted_path(os.real_path(dirpath)))
 		}
 		else {}
-	}
-	os.execvp('cmd', ['/k', 'cd', '/d', os.quoted_path(os.real_path(dirpath))]) or {
-		println('Failed to open tmp dir: ' + dirpath)
 	}
 }
 
